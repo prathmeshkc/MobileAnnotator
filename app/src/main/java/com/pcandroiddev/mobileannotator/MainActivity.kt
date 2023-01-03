@@ -72,6 +72,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         Log.d("MainActivity", "onCreate Called")
 
+        val intent = Intent(this, BeepReceiver::class.java).apply {
+            action = "com.pcandroiddev.MY_CUSTOM_BROADCAST"
+        }
+        val pendingIntent =
+            PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+
         //Call getPermission()
         getPermissionOverO(this)
         loadData()
@@ -79,21 +86,16 @@ class MainActivity : AppCompatActivity() {
             saveData(isChecked)
             if (binding.swRecord.isChecked) {
 
-                    val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-                    val intent = Intent(this, BeepReceiver::class.java)
-                    val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0)
-
-                    alarmManager.setRepeating(
-                        AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(),
-                        BUFFER_TIME.toLong(), pendingIntent
-                    )
+                alarmManager.setRepeating(
+                    AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(),
+                    BUFFER_TIME.toLong(), pendingIntent
+                )
 
 
             } else {
                 val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                val intent = Intent(this, BeepReceiver::class.java)
-                val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0)
                 alarmManager.cancel(pendingIntent)
                 RecordUtil.stopRecording()
             }

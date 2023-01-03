@@ -79,4 +79,8 @@ dependencies {
     //Google Cloud Firestore
     implementation 'com.google.cloud:google-cloud-firestore:3.6.0'
 
+
+    //OpenCSV
+    implementation 'com.opencsv:opencsv:5.7.1'
+
 }

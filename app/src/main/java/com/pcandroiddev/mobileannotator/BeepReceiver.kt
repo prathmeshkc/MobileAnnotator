@@ -11,6 +11,7 @@ import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.speech.v1.*
 import com.google.protobuf.ByteString
 import com.pcandroiddev.mobileannotator.model.ActivityPrompt
+import com.pcandroiddev.mobileannotator.util.CSVUtil
 import com.pcandroiddev.mobileannotator.util.CloudUtil
 import com.pcandroiddev.mobileannotator.util.RecordUtil
 import com.pcandroiddev.mobileannotator.util.TranscriptUtil
@@ -113,6 +114,34 @@ class BeepReceiver : BroadcastReceiver() {
                           */
 
 
+
+                        // Writing the promptData to a .csv file named "promptData.csv"
+                        val nameList = file.nameWithoutExtension.split("_")
+                        val timeStamp = nameList[1].substring(0,2) + "-" + nameList[1].substring(2,4) + "-" + nameList[1].substring(4) + "  " + nameList[2].substring(0,2) + ":" + nameList[2].substring(2,4) + "  " + nameList[2].substring(4)
+
+                        Log.d(
+                            "setOnCompletionListener",
+                            "nameSplitList|timeStamp: $nameList | $timeStamp"
+                        )
+                        val recognizedWords =
+                            TranscriptUtil.getRecognizedWords(transcriptText.toString())
+                        val knownKeywordsRecognized =
+                            TranscriptUtil.getKnownKeywords(recognizedWords = recognizedWords)
+
+
+                        val activityPrompt = ActivityPrompt(
+                            time = timeStamp,
+                            recognizedWords = recognizedWords,
+                            knownKeywordsRecognized = knownKeywordsRecognized,
+                            pathToAudioClip = path.toString()
+                        )
+
+                        CSVUtil.writeToCSV(promptData = activityPrompt)
+                        Log.d("setOnCompletionListener", "Prompt Finished!")
+
+
+
+/*
                         //Upload audio to Google Cloud Storage
                         val credentialInputStream =
                             context?.applicationContext?.resources?.openRawResource(R.raw.credentials)
@@ -122,14 +151,14 @@ class BeepReceiver : BroadcastReceiver() {
 
 
 
-/*
+*//*
 
                         1. Make a val recognizedWords: ArrayList<String>,
                         2. Make a val knownKeywordsRecognized: ArrayList<String>,
                         3. Upload audio to firebase storage: val gcloudUrl = CloudUtil.storeToCloud(file.name, data)
                         4. Get val urlPathToRawAudioClip: String
                         5. Create a document on Firestore: val CloudUtil.storeToFireStore(activityPrompt: ActivityPrompt)
-*/
+*//*
 
                         //Rec_28122022_0124PM.wav
                         val nameList = file.nameWithoutExtension.split("_")
@@ -153,6 +182,7 @@ class BeepReceiver : BroadcastReceiver() {
                         )
                         val credentials = context?.applicationContext?.resources?.openRawResource(R.raw.credentials)
                         CloudUtil.storeToFireStore(activityPrompt, credentialInputStream = credentials)
+                    */
                     }
                 }
             }
